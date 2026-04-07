@@ -78,10 +78,25 @@
                         <span>Дверь</span>
                     </button>
                 </div>
+                <div class="tool-group mode-toggle">
+                    <label class="mode-label">Режим:</label>
+                    <select id="viewModeSelect">
+                        <option value="engineer">Инженерный</option>
+                        <option value="designer">Дизайнерский</option>
+                    </select>
+                </div>
                 <div class="tool-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="snapToGrid" checked>
                         <span>Привязка к сетке</span>
+                    </label>
+                    <label class="checkbox-label wall-type-label">
+                        <input type="checkbox" id="loadBearingWall">
+                        <span>Несущая стена</span>
+                    </label>
+                    <label class="tool-label">
+                        <span>Толщина стены:</span>
+                        <input type="number" id="wallThickness" value="8" min="4" max="40" step="2">
                     </label>
                 </div>
                 <div class="tool-info" id="toolInfo">
@@ -98,6 +113,66 @@
             <aside class="properties-panel" id="propertiesPanel" style="display: none;">
                 <h3>Свойства</h3>
                 <div id="propertiesContent"></div>
+            </aside>
+
+            <!-- Designer Mode Panel -->
+            <aside class="designer-panel" id="designerPanel" style="display: none;">
+                <h3>Мебель и отделка</h3>
+                <div class="designer-section">
+                    <h4>Мебель</h4>
+                    <div class="furniture-grid" id="furnitureGrid">
+                        <div class="furniture-item" data-type="bed">
+                            <div class="furniture-icon bed-icon"></div>
+                            <span>Кровать</span>
+                        </div>
+                        <div class="furniture-item" data-type="sofa">
+                            <div class="furniture-icon sofa-icon"></div>
+                            <span>Диван</span>
+                        </div>
+                        <div class="furniture-item" data-type="table">
+                            <div class="furniture-icon table-icon"></div>
+                            <span>Стол</span>
+                        </div>
+                        <div class="furniture-item" data-type="chair">
+                            <div class="furniture-icon chair-icon"></div>
+                            <span>Стул</span>
+                        </div>
+                        <div class="furniture-item" data-type="wardrobe">
+                            <div class="furniture-icon wardrobe-icon"></div>
+                            <span>Шкаф</span>
+                        </div>
+                        <div class="furniture-item" data-type="kitchen">
+                            <div class="furniture-icon kitchen-icon"></div>
+                            <span>Кухня</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="designer-section">
+                    <h4>Покрытие пола</h4>
+                    <div class="floor-options" id="floorOptions">
+                        <button class="floor-btn" data-floor="none">Нет</button>
+                        <button class="floor-btn" data-floor="parquet">Паркет</button>
+                        <button class="floor-btn" data-floor="tile">Кафель</button>
+                        <button class="floor-btn" data-floor="carpet">Ковер</button>
+                        <label class="floor-btn upload-btn">
+                            Загрузить
+                            <input type="file" id="floorUpload" accept="image/*" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+                <div class="designer-section">
+                    <h4>Обои (для комнат)</h4>
+                    <div class="wallpaper-options" id="wallpaperOptions">
+                        <button class="wallpaper-btn" data-wallpaper="none">Нет</button>
+                        <button class="wallpaper-btn" data-wallpaper="plain">Гладкие</button>
+                        <button class="wallpaper-btn" data-wallpaper="pattern">Узор</button>
+                        <button class="wallpaper-btn" data-wallpaper="brick">Кирпич</button>
+                        <label class="wallpaper-btn upload-btn">
+                            Загрузить
+                            <input type="file" id="wallpaperUpload" accept="image/*" style="display: none;">
+                        </label>
+                    </div>
+                </div>
             </aside>
         </main>
     </div>
