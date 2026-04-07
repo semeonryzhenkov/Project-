@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Load</title>
+</head>
+<body>
+    <h1>Тест загрузки файлов</h1>
+    <div id="status"></div>
+    <script>
+        async function test() {
+            const files = ['index.html', 'styles.css', 'app.js'];
+            let results = '';
+            for (const file of files) {
+                try {
+                    const response = await fetch(file);
+                    const text = await response.text();
+                    results += `<p>${file}: OK (${text.length} символов)</p>`;
+                } catch (e) {
+                    results += `<p>${file}: ОШИБКА - ${e.message}</p>`;
+                }
+            }
+            document.getElementById('status').innerHTML = results;
+        }
+        test();
+    </script>
+</body>
+</html>
