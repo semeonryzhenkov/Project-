@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interior Planner Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Боковая панель проектов -->
+        <aside id="sidebar">
+            <div class="panel-header">
+                <h2>Проекты</h2>
+                <button id="btn-new-project" title="Новый проект">+</button>
+            </div>
+            <ul id="project-list"></ul>
+            <div class="project-actions">
+                <button id="btn-rename">Переименовать</button>
+                <button id="btn-duplicate">Копия</button>
+                <button id="btn-delete" class="danger">Удалить</button>
+            </div>
+            <div class="export-actions">
+                <button id="btn-export-json">Экспорт JSON</button>
+                <label for="file-import" class="btn-label">Импорт JSON</label>
+                <input type="file" id="file-import" accept=".json" style="display:none">
+                <button id="btn-export-img">Скачать план (PNG)</button>
+            </div>
+            <div class="stats-panel">
+                <h3>Статистика</h3>
+                <div id="room-stats"></div>
+                <div id="total-area"></div>
+            </div>
+        </aside>
+
+        <!-- Основная область -->
+        <main id="workspace">
+            <!-- Верхняя панель инструментов -->
+            <header id="toolbar">
+                <div class="tool-group">
+                    <button class="tool active" data-tool="select" title="Выбор (V)">↖</button>
+                    <button class="tool" data-tool="wall" title="Стена (W)">│</button>
+                    <button class="tool" data-tool="window" title="Окно (O)">▦</button>
+                    <button class="tool" data-tool="door" title="Дверь (D)">⊓</button>
+                    <button class="tool" data-tool="furniture" title="Мебель (F)">▣</button>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="tool-group settings-group">
+                    <label>Толщина (см): <input type="number" id="wall-thickness" value="20" min="4" max="40"></label>
+                    <label><input type="checkbox" id="is-load-bearing"> Несущая</label>
+                    <label>Режим: 
+                        <select id="view-mode">
+                            <option value="engineering">Инженерный</option>
+                            <option value="designer">Дизайнерский</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="tool-group history-group">
+                    <button id="btn-undo" title="Отменить (Ctrl+Z)">↶</button>
+                    <button id="btn-redo" title="Повторить (Ctrl+Y)">↷</button>
+                </div>
+
+                <div class="separator"></div>
+                
+                <div class="tool-group layers-group">
+                    <span>Слои:</span>
+                    <label><input type="checkbox" id="layer-walls" checked> Стены</label>
+                    <label><input type="checkbox" id="layer-dims" checked> Размеры</label>
+                    <label><input type="checkbox" id="layer-furniture" checked> Мебель</label>
+                    <label><input type="checkbox" id="layer-rooms" checked> Комнаты</label>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="tool-group view-controls">
+                    <button id="btn-zoom-out" title="Уменьшить">−</button>
+                    <span id="zoom-level">100%</span>
+                    <button id="btn-zoom-in" title="Увеличить">+</button>
+                    <button id="btn-fit-view" title="Показать всё">⊡</button>
+                </div>
+
+                <div class="status-bar">
+                    <span id="coords">0:0</span> | <span id="length-display"></span>
+                </div>
+            </header>
+
+            <!-- Холст -->
+            <div id="canvas-container">
+                <canvas id="plan-canvas"></canvas>
+            </div>
+
+            <!-- Панель свойств (контекстная) -->
+            <aside id="properties-panel" class="hidden">
+                <h3>Свойства</h3>
+                <div id="prop-content"></div>
+                <button id="btn-delete-obj" class="danger">Удалить объект</button>
+            </aside>
+
+            <!-- Панель дизайнера (мебель и материалы) -->
+            <aside id="designer-panel" class="hidden">
+                <h3>Библиотека</h3>
+                
+                <div class="designer-section">
+                    <h4>Мебель</h4>
+                    <div class="furniture-grid">
+                        <div class="furniture-item" data-type="bed"><span class="f-icon">⊟</span><small>Кровать</small></div>
+                        <div class="furniture-item" data-type="sofa"><span class="f-icon">▭</span><small>Диван</small></div>
+                        <div class="furniture-item" data-type="table"><span class="f-icon">◻</span><small>Стол</small></div>
+                        <div class="furniture-item" data-type="chair"><span class="f-icon">▯</span><small>Стул</small></div>
+                        <div class="furniture-item" data-type="tv"><span class="f-icon">◧</span><small>ТВ</small></div>
+                        <div class="furniture-item" data-type="plant"><span class="f-icon">◉</span><small>Растение</small></div>
+                        <div class="furniture-item" data-type="bath"><span class="f-icon">◡</span><small>Ванна</small></div>
+                        <div class="furniture-item" data-type="toilet"><span class="f-icon">○</span><small>Унитаз</small></div>
+                        <div class="furniture-item" data-type="sink"><span class="f-icon">◐</span><small>Раковина</small></div>
+                        <div class="furniture-item" data-type="fridge"><span class="f-icon">▣</span><small>Холод.</small></div>
+                        <div class="furniture-item" data-type="stove"><span class="f-icon">◈</span><small>Плита</small></div>
+                        <div class="furniture-item" data-type="wardrobe"><span class="f-icon">▤</span><small>Шкаф</small></div>
+                        <div class="furniture-item" data-type="desk"><span class="f-icon">▫</span><small>Стол</small></div>
+                        <div class="furniture-item" data-type="shelf"><span class="f-icon">≡</span><small>Полка</small></div>
+                    </div>
+                </div>
+
+                <div class="designer-section">
+                    <h4>Материалы пола</h4>
+                    <div class="material-grid">
+                        <button class="mat-btn" data-mat="none">Нет</button>
+                        <button class="mat-btn" data-mat="wood">Паркет</button>
+                        <button class="mat-btn" data-mat="tile">Кафель</button>
+                        <button class="mat-btn" data-mat="carpet">Ковер</button>
+                        <button class="mat-btn" data-mat="concrete">Бетон</button>
+                        <button class="mat-btn" data-mat="laminate">Ламинат</button>
+                    </div>
+                    <label class="file-upload">
+                        Загрузить текстуру
+                        <input type="file" id="floor-texture-upload" accept="image/*" hidden>
+                    </label>
+                </div>
+
+                <div class="designer-section">
+                    <h4>Обои (для комнат)</h4>
+                    <label>Цвет: <input type="color" id="wall-color-picker" value="#ffffff"></label>
+                    <div class="material-grid">
+                        <button class="mat-btn" data-pattern="solid">Сплошной</button>
+                        <button class="mat-btn" data-pattern="stripes">Полоска</button>
+                        <button class="mat-btn" data-pattern="dots">Горох</button>
+                        <button class="mat-btn" data-pattern="brick">Кирпич</button>
+                        <button class="mat-btn" data-pattern="wood">Дерево</button>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
