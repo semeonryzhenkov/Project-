@@ -12,12 +12,15 @@
         <aside id="sidebar">
             <div class="panel-header">
                 <h2>Проекты</h2>
-                <button id="btn-new-project" title="Новый проект">+</button>
+                <button id="newProjectBtn" title="Новый проект">+</button>
             </div>
-            <ul id="project-list"></ul>
+            <ul id="projectsList"></ul>
             <div class="project-actions">
-                <button id="btn-duplicate">Копия</button>
-                <button id="btn-delete" class="danger">Удалить</button>
+                <button id="duplicateProjectBtn">Копия</button>
+                <button id="deleteProjectBtn" class="danger">Удалить</button>
+            </div>
+            <div id="selectedProjectInfo" class="hidden">
+                <div id="currentProjectName"></div>
             </div>
         </aside>
 
@@ -34,18 +37,19 @@
             <!-- Панель инструментов -->
             <div id="toolbar-container">
                 <div id="toolbar-engineering" class="toolbar-section">
-                    <button class="tool-btn active" data-tool="select" title="Выбор">Выбор</button>
-                    <button class="tool-btn" data-tool="wall" title="Стена">Стена</button>
-                    <button class="tool-btn" data-tool="door" title="Дверь">Дверь</button>
-                    <button class="tool-btn" data-tool="window" title="Окно">Окно</button>
+                    <button class="tool-btn active" id="selectTool" data-tool="select" title="Выбор">Выбор</button>
+                    <button class="tool-btn" id="wallTool" data-tool="wall" title="Стена">Стена</button>
+                    <button class="tool-btn" id="doorTool" data-tool="door" title="Дверь">Дверь</button>
+                    <button class="tool-btn" id="windowTool" data-tool="window" title="Окно">Окно</button>
                     <div class="tool-separator"></div>
                     <label class="tool-label">Толщина стены (см):
-                        <input type="number" id="wall-thickness" value="20" min="5" max="50">
+                        <input type="number" id="wallThickness" value="20" min="5" max="50">
                     </label>
+                    <div id="toolInfo" class="tool-info"></div>
                 </div>
 
                 <div id="toolbar-designer" class="toolbar-section hidden">
-                    <button class="tool-btn active" data-tool="select" title="Выбор">Выбор</button>
+                    <button class="tool-btn active" id="selectToolDesigner" data-tool="select" title="Выбор">Выбор</button>
                     <div class="tool-separator"></div>
                     <span class="tool-label">Мебель:</span>
                     <button class="tool-btn" data-furniture-category="sofas">Диваны</button>
@@ -61,15 +65,32 @@
 
             <!-- Холст -->
             <div id="canvas-container">
-                <canvas id="plan-canvas"></canvas>
+                <canvas id="planCanvas"></canvas>
             </div>
 
             <!-- Контекстная панель свойств -->
-            <aside id="properties-panel" class="hidden">
+            <aside id="propertiesPanel" class="hidden">
                 <h3>Свойства</h3>
-                <div id="prop-content"></div>
+                <div id="propertiesContent"></div>
                 <button id="btn-delete-obj" class="danger">Удалить объект</button>
             </aside>
+
+            <!-- Модальное окно -->
+            <div id="modalOverlay" class="modal-overlay hidden">
+                <div class="modal-window">
+                    <h3 id="modalTitle">Новый проект</h3>
+                    <input type="text" id="modalInput" placeholder="Название проекта">
+                    <div class="modal-buttons">
+                        <button id="modalCancelBtn">Отмена</button>
+                        <button id="modalConfirmBtn">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Панель ввода имени комнаты -->
+            <div id="roomNameInput" class="hidden">
+                <input type="text" id="roomNameField" placeholder="Имя комнаты">
+            </div>
 
             <!-- Панель библиотеки мебели (для дизайнерского режима) -->
             <aside id="library-panel" class="hidden">
@@ -150,6 +171,13 @@
                     </div>
                 </div>
             </aside>
+            
+            <!-- Чекбокс привязки к сетке -->
+            <div class="snap-control">
+                <label>
+                    <input type="checkbox" id="snapToGrid" checked> Привязка к сетке
+                </label>
+            </div>
         </main>
     </div>
     <script src="app.js"></script>
