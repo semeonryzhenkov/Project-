@@ -1,5 +1,3 @@
 ```
-# Logs and temp files
 *.log
-server.log
 ```
